@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Skylover Cyber Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: black;
+      font-family: 'Orbitron', monospace;
+      color: #00ff00;
+      overflow: hidden;
+    }
+
+    canvas {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: #00ff00;
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: 2px solid #00ff00;
+      animation: typing 4s steps(30) infinite, blink 0.7s step-end infinite;
+    }
+
+    @keyframes typing {
+      0% { width: 0 }
+      50% { width: 100% }
+      100% { width: 0 }
+    }
+
+    @keyframes blink {
+      0%, 100% { border-color: transparent }
+      50% { border-color: #00ff00 }
+    }
+
+    input[type="password"] {
+      background: transparent;
+      border: none;
+      color: #00ff00;
+      font-size: 18px;
+      padding: 10px;
+      font-family: monospace;
+      width: 300px;
+      text-align: center;
+      outline: none;
+      margin-top: 30px;
+      caret-color: #00ff00;
+    }
+
+    input[type="password"]::placeholder {
+      color: #007700;
+      font-style: italic;
+    }
+
+    button, .portfolio-btn {
+      background-color: transparent;
+      color: #00ff00;
+      border: 2px solid #00ff00;
+      padding: 8px 24px;
+      margin-top: 10px;
+      font-size: 16px;
+      font-family: monospace;
+      cursor: pointer;
+      transition: 0.3s;
+      text-decoration: none;
+    }
+
+    button:hover, .portfolio-btn:hover {
+      background-color: red;
+      color: white;
+      border-color: red;
+    }
+
+    .access-granted, .Access-Denied {
+      position: fixed;
+      z-index: 1000;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .access-granted {
+      color: #00ff00;
+    }
+
+    .Access-Denied {
+      color: red;
+    }
+
+    .socials {
+      margin-top: 30px;
+    }
+
+    .socials a {
+      color: #00ff00;
+      font-size: 22px;
+      margin: 0 12px;
+      transition: color 0.3s;
+    }
+
+    .socials a:hover {
+      color: #ff0000;
+    }
+
+    .portfolio-link {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="matrixCanvas"></canvas>
+
+<div class="container">
+  <h1>Welcome to Skylover Cyber Life</h1>
+  <input type="password" id="passwordInput" placeholder="Type password and click login" />
+  <button onclick="checkPassword()">LOGIN</button>
+
+  <div class="portfolio-link">
+    <a class="portfolio-btn" href="https://skyloverflowsmaster.github.io/skylover-portfolio/" target="_blank">
+      <i class="fas fa-user-secret"></i> See More About Skylover
+    </a>
+  </div>
+
+  <div class="socials">
+    <a href="https://tiktok.com/@blessed_skylover" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
+    <a href="https://facebook.com/skylover flowsmaster" target="_blank" title="Facebook"><i class="fab fa-facebook"></i></a>
+    <a href="https://youtube.com/@skyloverflowsmaster" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
+    <a href="https://instagram.com/skyloverflowsmaster" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+    <a href="https://x.com/skylover flowsmaster" target="_blank" title="Twitter / X"><i class="fab fa-twitter"></i></a>
+    <a href="https://linkedin.com/in/skyloverflowsmaster" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+  </div>
+</div>
+
+<div id="accessMessage" class="access-granted" style="display: none;">
+  ACCESS GRANTED, BOSS 🔓
+</div>
+
+<div id="accessMessage2" class="Access-Denied" style="display: none;">
+  ACCESS DENIED
+</div>
+
+<script>
+  // Matrix background
+  const canvas = document.getElementById('matrixCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const chars = "01";
+  const fontSize = 16;
+  const columns = canvas.width / fontSize;
+  let drops = Array.from({ length: columns }).fill(1);
+  let toggleColor = true;
+
+  function drawMatrix() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = toggleColor ? "#00ff00" : "#ff0000";
+    ctx.font = fontSize + "px monospace";
+
+    for (let i = 0; i < drops.length; i++) {
+      const char = chars.charAt(Math.floor(Math.random() * chars.length));
+      ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+  }
+
+  setInterval(drawMatrix, 50);
+  setInterval(() => { toggleColor = !toggleColor; }, 3000);
+
+  window.addEventListener("resize", () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+
+  // Set default password if not already stored
+  if (!localStorage.getItem("skylover_password")) {
+    localStorage.setItem("skylover_password", "cyberlife2025");
+  }
+
+  function checkPassword() {
+    const entered = document.getElementById("passwordInput").value.trim();
+    const stored = localStorage.getItem("skylover_password");
+
+    if (entered === stored) {
+      // ✅ Login success
+      document.getElementById("accessMessage").style.display = "flex";
+      localStorage.setItem("skylover_logged_in", "true");
+      setTimeout(() => {
+        window.location.href = "dashboard.html";
+      }, 3000);
+    } else {
+      // ❌ Login failed
+      document.getElementById("accessMessage2").style.display = "flex";
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 2000);
+    }
+  }
+</script>
+
+</body>
+</html>
